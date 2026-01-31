@@ -1,0 +1,11 @@
+﻿[project]
+name = "shoppulse-sg"
+version = "0.0.0"
+requires-python = ">=3.12"
+dependencies = [
+  "clickhouse-connect>=0.10.0",
+  "requests>=2.31.0",
+]
+
+[project.optional-dependencies]
+geo = ["shapely>=2.0.0"]

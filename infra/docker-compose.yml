@@ -1,0 +1,57 @@
+﻿services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: clickhouse
+    restart: unless-stopped
+    environment:
+      CLICKHOUSE_USER: "default"
+      CLICKHOUSE_PASSWORD: "shoppulse"
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: "1"
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+      - ./clickhouse/config.d/99-cors.xml:/etc/clickhouse-server/config.d/99-cors.xml:ro
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+
+  ch-ui:
+    image: ghcr.io/caioricciuti/ch-ui:latest
+    container_name: ch-ui
+    restart: unless-stopped
+    environment:
+      VITE_CLICKHOUSE_URL: "http://localhost:8123"
+      VITE_CLICKHOUSE_USER: "default"
+      VITE_CLICKHOUSE_PASS: "shoppulse"
+      VITE_CLICKHOUSE_DATABASE: "default"
+      VITE_CLICKHOUSE_REQUEST_TIMEOUT: "30000"
+      VITE_CLICKHOUSE_CUSTOM_PATH: ""
+      VITE_CLICKHOUSE_USE_ADVANCED: "false"
+    ports:
+      - "5521:5521"
+    depends_on:
+      - clickhouse
+
+  backend:
+    build:
+      context: ../backend
+    env_file:
+      - ../backend/.env.example
+    ports:
+      - "8000:8000"
+    depends_on:
+      - clickhouse
+
+  frontend:
+    build:
+      context: ../frontend
+    ports:
+      - "4200:4200"
+    depends_on:
+      - backend
+
+volumes:
+  clickhouse_data:

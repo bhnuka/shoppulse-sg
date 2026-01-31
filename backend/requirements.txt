@@ -1,0 +1,4 @@
+﻿fastapi==0.115.8
+uvicorn[standard]==0.30.6
+pydantic-settings==2.6.1
+clickhouse-connect==0.10.0
