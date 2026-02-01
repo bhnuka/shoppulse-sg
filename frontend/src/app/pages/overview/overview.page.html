@@ -11,29 +11,29 @@
 
   <div class="kpi-grid">
     <div class="kpi">
-      <div class="label">New entities (30d)</div>
+      <div class="label label-row">New entities (30d) <span class="info-icon" title="Count of new registrations in the selected window. YoY compares to the same window last year.">?</span></div>
       <div class="value">{{ ov.metrics[0]?.value }}</div>
       <div class="delta" *ngIf="ov.metrics[0]?.change_yoy_pct !== null">
         {{ ov.metrics[0]?.change_yoy_pct }}% YoY
       </div>
     </div>
     <div class="kpi">
-      <div class="label">Top SSIC</div>
+      <div class="label label-row">Top SSIC <span class="info-icon" title="Most common SSIC code among new registrations in the selected window.">?</span></div>
       <div class="value">{{ ov.top_ssic?.ssic_code || 'N/A' }}</div>
       <div class="delta">{{ ov.top_ssic?.count }} new entities</div>
     </div>
     <div class="kpi">
-      <div class="label">Hottest area</div>
+      <div class="label label-row">Hottest area <span class="info-icon" title="Area with the most new registrations in the selected window (planning area or subzone if planning area not available).">?</span></div>
       <div class="value">{{ ov.hottest_planning_area?.planning_area_id || 'N/A' }}</div>
       <div class="delta">{{ ov.hottest_planning_area?.count }} new entities</div>
     </div>
   </div>
 
   <div class="grid">
-    <app-line-chart title="New entities over time" [labels]="chartLabels" [values]="chartValues"></app-line-chart>
+    <app-line-chart title="New entities over time" info="Monthly counts of new registrations" [labels]="chartLabels" [values]="chartValues"></app-line-chart>
 
     <div class="card">
-      <div class="card-title">Top SSICs</div>
+      <div class="card-title">Top SSICs <span class="info-icon" title="Top SSIC codes by new registrations in the selected window.">?</span></div>
       <table>
         <thead>
           <tr>

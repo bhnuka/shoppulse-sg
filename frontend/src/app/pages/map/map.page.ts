@@ -56,18 +56,25 @@ export class MapPage implements AfterViewInit, OnDestroy {
     }
 
     const maxCount = Math.max(...hotspots.map((h) => h.count), 1);
-    const features = hotspots.map((h) => {
-      const geometry = JSON.parse(h.geometry);
-      return {
-        type: 'Feature',
-        properties: {
-          name: h.name || h.subzone_id || 'Unknown',
-          count: h.count,
-          planning_area_id: h.planning_area_id || ''
-        },
-        geometry
-      } as GeoJSON.Feature;
-    });
+    const features = hotspots
+      .filter((h) => h.geometry && h.geometry.trim().length > 0)
+      .map((h) => {
+        try {
+          const geometry = JSON.parse(h.geometry);
+          return {
+            type: 'Feature',
+            properties: {
+              name: h.name || h.subzone_id || 'Unknown',
+              count: h.count,
+              planning_area_id: h.planning_area_id || ''
+            },
+            geometry
+          } as GeoJSON.Feature;
+        } catch {
+          return null;
+        }
+      })
+      .filter((feature): feature is GeoJSON.Feature => feature !== null);
 
     const geoJson = {
       type: 'FeatureCollection',

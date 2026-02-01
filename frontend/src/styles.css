@@ -8,3 +8,28 @@ body {
 * {
   box-sizing: border-box;
 }
+
+.info-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.08);
+  color: #0f172a;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  margin-left: 6px;
+  cursor: help;
+}
+
+.label-row,
+.chart-title,
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+

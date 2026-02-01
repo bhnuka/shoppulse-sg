@@ -36,7 +36,7 @@ export class OverviewPage {
       area: this.filters.area
     };
 
-    this.api.getOverview().subscribe((data) => (this.overview = data));
+    this.api.getOverview(params).subscribe((data) => (this.overview = data));
     this.api.getTrends(params).subscribe((data) => {
       this.trends = data;
       this.loading = false;

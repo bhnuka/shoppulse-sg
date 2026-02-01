@@ -9,6 +9,9 @@
 .chart-title {
   font-weight: 600;
   margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .chart-canvas {

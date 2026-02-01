@@ -8,11 +8,11 @@
     <input type="date" [(ngModel)]="state.to" (change)="onChange()" />
   </div>
   <div class="filter">
-    <label>SSIC</label>
+    <label class="label-row">SSIC <span class="info-icon" title="Singapore Standard Industrial Classification (SSIC) code. Examples: 47 (Retail), 56 (F&B), 62 (IT services). Use 2- or 5-digit codes.">?</span></label>
     <input type="text" placeholder="e.g. 47" [(ngModel)]="state.ssic" (input)="onChange()" />
   </div>
   <div class="filter">
-    <label>Area</label>
+    <label class="label-row">Area <span class="info-icon" title="Planning area or subzone name (e.g., Tampines, Jurong West, Woodlands).">?</span></label>
     <input type="text" placeholder="Planning area" [(ngModel)]="state.area" (input)="onChange()" />
   </div>
 </div>

@@ -15,6 +15,7 @@ export class LineChartComponent implements OnChanges, OnDestroy {
   @Input() labels: string[] = [];
   @Input() values: number[] = [];
   @Input() title = '';
+  @Input() info?: string;
 
   @ViewChild('canvas', { static: true }) canvas!: ElementRef<HTMLCanvasElement>;
   private chart?: Chart;

@@ -94,8 +94,14 @@ export class ApiService {
 
   constructor(private readonly http: HttpClient) {}
 
-  getOverview(): Observable<OverviewResponse> {
-    return this.http.get<OverviewResponse>(`${this.baseUrl}/api/overview`);
+  getOverview(params?: { from?: string; to?: string; ssic?: string; area?: string; area_type?: string }): Observable<OverviewResponse> {
+    let httpParams = new HttpParams();
+    Object.entries(params ?? {}).forEach(([key, value]) => {
+      if (value) {
+        httpParams = httpParams.set(key, value);
+      }
+    });
+    return this.http.get<OverviewResponse>(`${this.baseUrl}/api/overview`, { params: httpParams });
   }
 
   getTrends(params?: { ssic?: string; area?: string; area_type?: string; from?: string; to?: string }): Observable<TrendsResponse> {

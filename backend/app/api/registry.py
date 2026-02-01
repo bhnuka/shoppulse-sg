@@ -123,22 +123,37 @@ def build_area_filter(area: Optional[str], area_type: str) -> tuple[str, Dict[st
 
 
 @router.get("/overview", response_model=OverviewResponse)
-def get_overview():
+def get_overview(
+    from_date: Optional[str] = Query(None, alias="from"),
+    to_date: Optional[str] = Query(None, alias="to"),
+    ssic: Optional[str] = None,
+    area: Optional[str] = None,
+    area_type: str = Query("planning_area"),
+):
     client = get_client()
-    end_date = date.today()
-    start_date = end_date - timedelta(days=30)
+    end_date = parse_date(to_date, date.today())
+    start_date = parse_date(from_date, end_date - timedelta(days=30))
     prev_start = start_date.replace(year=start_date.year - 1)
     prev_end = end_date.replace(year=end_date.year - 1)
+
+    ssic_clause, ssic_params = build_ssic_filter(ssic)
+    area_clause, area_params = build_area_filter(area, area_type)
 
     total_sql = (
         "SELECT count() FROM acra_entities_enriched "
         "WHERE registration_incorporation_date BETWEEN {start:Date32} AND {end:Date32}"
+        + ssic_clause
+        + area_clause
     )
-    total = client.query(total_sql, parameters={"start": start_date, "end": end_date}).result_rows[0][0]
+    params = {"start": start_date, "end": end_date}
+    params.update(ssic_params)
+    params.update(area_params)
+    total = client.query(total_sql, parameters=params).result_rows[0][0]
 
-    prev_total = client.query(
-        total_sql, parameters={"start": prev_start, "end": prev_end}
-    ).result_rows[0][0]
+    prev_params = {"start": prev_start, "end": prev_end}
+    prev_params.update(ssic_params)
+    prev_params.update(area_params)
+    prev_total = client.query(total_sql, parameters=prev_params).result_rows[0][0]
 
     yoy = None
     if prev_total:
@@ -148,27 +163,56 @@ def get_overview():
         "SELECT primary_ssic_norm, count() AS cnt "
         "FROM acra_entities_enriched "
         "WHERE registration_incorporation_date BETWEEN {start:Date32} AND {end:Date32} "
-        "GROUP BY primary_ssic_norm "
+        + area_clause
+        + " GROUP BY primary_ssic_norm "
         "ORDER BY cnt DESC "
         "LIMIT 1"
     )
-    top_ssic_row = client.query(top_ssic_sql, parameters={"start": start_date, "end": end_date}).result_rows
+    top_ssic_row = client.query(top_ssic_sql, parameters=params).result_rows
     top_ssic = None
-    if top_ssic_row:
+    if top_ssic_row and top_ssic_row[0][0] is not None:
         top_ssic = {"ssic_code": top_ssic_row[0][0], "count": top_ssic_row[0][1]}
 
     top_area_sql = (
         "SELECT planning_area_id, count() AS cnt "
         "FROM acra_entities_enriched "
         "WHERE registration_incorporation_date BETWEEN {start:Date32} AND {end:Date32} "
-        "GROUP BY planning_area_id "
+        + ssic_clause
+        + " GROUP BY planning_area_id "
         "ORDER BY cnt DESC "
         "LIMIT 1"
     )
-    top_area_row = client.query(top_area_sql, parameters={"start": start_date, "end": end_date}).result_rows
+    top_area_row = client.query(top_area_sql, parameters=params).result_rows
     hottest = None
-    if top_area_row:
-        hottest = {"planning_area_id": top_area_row[0][0], "count": top_area_row[0][1]}
+    if top_area_row and top_area_row[0][0] is not None:
+        hottest = {
+            "planning_area_id": top_area_row[0][0],
+            "count": top_area_row[0][1],
+            "area_type": "planning_area",
+        }
+    else:
+        fallback_sql = (
+            "SELECT subzone_id, count() AS cnt "
+            "FROM acra_entities_enriched "
+            "WHERE registration_incorporation_date BETWEEN {start:Date32} AND {end:Date32} "
+            + ssic_clause
+            + " GROUP BY subzone_id "
+            "ORDER BY cnt DESC "
+            "LIMIT 1"
+        )
+        fallback_row = client.query(fallback_sql, parameters=params).result_rows
+        if fallback_row and fallback_row[0][0] is not None:
+            hottest = {
+                "planning_area_id": fallback_row[0][0],
+                "count": fallback_row[0][1],
+                "area_type": "subzone",
+            }
+        else:
+            hottest = {
+                "planning_area_id": "UNMAPPED",
+                "count": total,
+                "area_type": "unmapped",
+            }
 
     return OverviewResponse(
         period_start=start_date,
@@ -275,6 +319,7 @@ def map_hotspots(
         "LEFT JOIN dim_subzone AS s ON e.subzone_id = s.subzone_id "
         "WHERE e.registration_incorporation_date BETWEEN {start:Date32} AND {end:Date32}"
         + ssic_clause.replace("primary_ssic_norm", "e.primary_ssic_norm")
+        + " AND s.geometry IS NOT NULL AND s.geometry != '' "
         + " GROUP BY s.subzone_id, s.name, s.planning_area_id, s.geometry "
         "ORDER BY cnt DESC"
     )
