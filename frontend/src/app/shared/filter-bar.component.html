@@ -1,0 +1,18 @@
+﻿<div class="filter-bar">
+  <div class="filter">
+    <label>From</label>
+    <input type="date" [(ngModel)]="state.from" (change)="onChange()" />
+  </div>
+  <div class="filter">
+    <label>To</label>
+    <input type="date" [(ngModel)]="state.to" (change)="onChange()" />
+  </div>
+  <div class="filter">
+    <label>SSIC</label>
+    <input type="text" placeholder="e.g. 47" [(ngModel)]="state.ssic" (input)="onChange()" />
+  </div>
+  <div class="filter">
+    <label>Area</label>
+    <input type="text" placeholder="Planning area" [(ngModel)]="state.area" (input)="onChange()" />
+  </div>
+</div>

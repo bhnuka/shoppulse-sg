@@ -1,0 +1,64 @@
+﻿<section class="page" *ngIf="overview as ov">
+  <div class="page-head">
+    <div>
+      <h2>Overview</h2>
+      <p>Registry momentum and top movers</p>
+    </div>
+    <div class="pill">Updated just now</div>
+  </div>
+
+  <app-filter-bar [state]="filters" (stateChange)="onFiltersChange($event)"></app-filter-bar>
+
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="label">New entities (30d)</div>
+      <div class="value">{{ ov.metrics[0]?.value }}</div>
+      <div class="delta" *ngIf="ov.metrics[0]?.change_yoy_pct !== null">
+        {{ ov.metrics[0]?.change_yoy_pct }}% YoY
+      </div>
+    </div>
+    <div class="kpi">
+      <div class="label">Top SSIC</div>
+      <div class="value">{{ ov.top_ssic?.ssic_code || 'N/A' }}</div>
+      <div class="delta">{{ ov.top_ssic?.count }} new entities</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Hottest area</div>
+      <div class="value">{{ ov.hottest_planning_area?.planning_area_id || 'N/A' }}</div>
+      <div class="delta">{{ ov.hottest_planning_area?.count }} new entities</div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <app-line-chart title="New entities over time" [labels]="chartLabels" [values]="chartValues"></app-line-chart>
+
+    <div class="card">
+      <div class="card-title">Top SSICs</div>
+      <table>
+        <thead>
+          <tr>
+            <th>SSIC</th>
+            <th>Description</th>
+            <th class="num">Count</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of rankings?.items">
+            <td>{{ item.ssic_code || 'N/A' }}</td>
+            <td>{{ item.ssic_description || '—' }}</td>
+            <td class="num">{{ item.count }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="page" *ngIf="!overview">
+  <div class="page-head">
+    <div>
+      <h2>Overview</h2>
+      <p>Loading metrics…</p>
+    </div>
+  </div>
+</section>

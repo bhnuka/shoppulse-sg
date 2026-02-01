@@ -1,0 +1,55 @@
+﻿<section class="page">
+  <div class="page-head">
+    <div>
+      <h2>Ask ShopPulse</h2>
+      <p>NL analytics with evidence panel</p>
+    </div>
+    <div class="pill">NL→SQL</div>
+  </div>
+
+  <div class="chat-layout">
+    <div class="chat-panel">
+      <div class="messages">
+        <div class="message" *ngFor="let msg of messages" [class.user]="msg.role === 'user'">
+          {{ msg.text }}
+        </div>
+        <div class="message assistant" *ngIf="loading">Thinking…</div>
+      </div>
+      <div class="input-row">
+        <input type="text" [(ngModel)]="question" placeholder="Ask about registrations, areas, SSIC…" />
+        <button (click)="submit()">Send</button>
+      </div>
+    </div>
+
+    <div class="evidence" *ngIf="response">
+      <div class="card">
+        <div class="card-title">Narrative</div>
+        <p>{{ response.narrative }}</p>
+      </div>
+      <div class="card">
+        <div class="card-title">SQL</div>
+        <pre>{{ response.sql }}</pre>
+      </div>
+      <div class="card">
+        <div class="card-title">Data</div>
+        <div *ngIf="response.data?.length; else noData">
+          <table>
+            <thead>
+              <tr>
+                <th *ngFor="let key of (response.data[0] | keyvalue)">{{ key.key }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of response.data">
+                <td *ngFor="let col of (row | keyvalue)">{{ col.value }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <ng-template #noData>
+          <p>No rows returned.</p>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</section>

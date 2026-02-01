@@ -1,0 +1,41 @@
+﻿.page {
+  display: grid;
+  gap: 20px;
+}
+
+.page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.page-head h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.page-head p {
+  margin: 6px 0 0;
+  color: #6b7280;
+}
+
+.pill {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #0f172a;
+  color: #fff;
+  font-size: 12px;
+}
+
+.map-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 12px;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+}
+
+.map {
+  height: 520px;
+  border-radius: 14px;
+  overflow: hidden;
+}

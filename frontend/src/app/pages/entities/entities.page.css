@@ -1,0 +1,141 @@
+﻿.page {
+  display: grid;
+  gap: 20px;
+  position: relative;
+}
+
+.page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.page-head h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.page-head p {
+  margin: 6px 0 0;
+  color: #6b7280;
+}
+
+.pill {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #0f172a;
+  color: #fff;
+  font-size: 12px;
+}
+
+.search-bar {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 12px;
+  background: #ffffff;
+  padding: 12px;
+  border-radius: 14px;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+}
+
+.search-bar input {
+  border: 1px solid #d7dde3;
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+
+.search-bar button {
+  border: none;
+  border-radius: 10px;
+  padding: 8px 16px;
+  background: #0f172a;
+  color: #fff;
+  font-weight: 600;
+}
+
+.table-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+}
+
+.table-card table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table-card th,
+.table-card td {
+  padding: 10px 8px;
+  border-bottom: 1px solid #eef2f7;
+  text-align: left;
+}
+
+.table-card tbody tr {
+  cursor: pointer;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 380px;
+  background: #ffffff;
+  box-shadow: -12px 0 30px rgba(15, 23, 42, 0.12);
+  padding: 20px;
+}
+
+.drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.drawer-head h3 {
+  margin: 0;
+}
+
+.drawer-head p {
+  margin: 6px 0 0;
+  color: #64748b;
+}
+
+.drawer-head button {
+  border: none;
+  border-radius: 10px;
+  padding: 6px 10px;
+  background: #0f172a;
+  color: #fff;
+}
+
+.detail-grid {
+  margin-top: 16px;
+  display: grid;
+  gap: 10px;
+}
+
+.detail-grid div {
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+}
+
+.detail-grid span {
+  color: #64748b;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+@media (max-width: 960px) {
+  .search-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .drawer {
+    width: 100%;
+  }
+}

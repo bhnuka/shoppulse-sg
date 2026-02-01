@@ -1,1 +1,10 @@
-/* You can add global styles to this file, and also import other style files */
+﻿@import "leaflet/dist/leaflet.css";
+
+body {
+  margin: 0;
+  background: #eef2ff;
+}
+
+* {
+  box-sizing: border-box;
+}
