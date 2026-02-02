@@ -103,6 +103,7 @@ def geo_enrich(
     sleep_seconds: float,
     concurrency: int,
     batch_size: int,
+    mark_failed: bool,
 ):
     if not Point:
         raise RuntimeError("shapely not installed; pip install shapely")
@@ -128,6 +129,7 @@ def geo_enrich(
     inserted = 0
     for batch in chunks(postal_codes, batch_size):
         results = []
+        failures = []
         with ThreadPoolExecutor(max_workers=concurrency) as executor:
             future_map = {executor.submit(onemap_geocode, code): code for code in batch}
             for future in as_completed(future_map):
@@ -137,6 +139,7 @@ def geo_enrich(
                 except Exception:
                     coords = None
                 if not coords:
+                    failures.append(code)
                     continue
                 subzone_id = match_polygon(coords, subzone_polys)
                 planning_id = match_polygon(coords, planning_polys)
@@ -163,6 +166,24 @@ def geo_enrich(
             )
             inserted += len(results)
             print(f"Inserted {inserted} postal geo records")
+        if failures and mark_failed:
+            client.insert(
+                "dim_postal_geo",
+                [
+                    [code, None, None, None, None, datetime.now(timezone.utc)]
+                    for code in failures
+                ],
+                column_names=[
+                    "postal_code",
+                    "latitude",
+                    "longitude",
+                    "subzone_id",
+                    "planning_area_id",
+                    "updated_at",
+                ],
+            )
+            inserted += len(failures)
+            print(f"Marked {len(failures)} postal codes as failed (total {inserted})")
         if sleep_seconds:
             time.sleep(sleep_seconds)
 
@@ -226,6 +247,7 @@ def main():
     parser.add_argument("--batch-size", type=int, default=200)
     parser.add_argument("--refresh-enriched", action="store_true")
     parser.add_argument("--loop", action="store_true")
+    parser.add_argument("--mark-failed", action="store_true")
     args = parser.parse_args()
 
     client = get_client()
@@ -235,7 +257,7 @@ def main():
             print("No remaining postal codes to enrich")
             break
         print(f"Remaining postal codes: {remaining}")
-        geo_enrich(client, Path(args.subzone_geojson), Path(args.planning_geojson), args.limit, args.sleep, args.concurrency, args.batch_size)
+        geo_enrich(client, Path(args.subzone_geojson), Path(args.planning_geojson), args.limit, args.sleep, args.concurrency, args.batch_size, args.mark_failed)
         if args.refresh_enriched:
             rebuild_enriched(client)
         if not args.loop:
