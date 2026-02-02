@@ -33,6 +33,7 @@ export class OverviewPage {
       from: this.filters.from,
       to: this.filters.to,
       ssic: this.filters.ssic,
+      ssic_category: this.filters.ssicCategory,
       area: this.filters.area
     };
 
@@ -41,7 +42,14 @@ export class OverviewPage {
       this.trends = data;
       this.loading = false;
     });
-    this.api.getTopSsic({ from: this.filters.from, to: this.filters.to, area: this.filters.area, limit: 10 })
+    this.api.getTopSsic({
+      from: this.filters.from,
+      to: this.filters.to,
+      area: this.filters.area,
+      ssic: this.filters.ssic,
+      ssic_category: this.filters.ssicCategory,
+      limit: 10
+    })
       .subscribe((data) => (this.rankings = data));
   }
 

@@ -1,6 +1,9 @@
 ﻿from __future__ import annotations
 
 from datetime import date, datetime, timedelta
+import json
+from functools import lru_cache
+from pathlib import Path
 from typing import Dict, List, Optional
 
 from fastapi import APIRouter, Query, HTTPException
@@ -88,6 +91,30 @@ class EntityDetailResponse(EntitySummary):
 
 ALLOWED_AREA_TYPES = {"planning_area", "subzone"}
 
+@lru_cache
+def load_ssic_categories() -> dict:
+    data_path = Path(__file__).resolve().parent.parent / "data" / "ssic_categories.json"
+    if not data_path.exists():
+        return {"sectors": [], "categories": []}
+    return json.loads(data_path.read_text(encoding="utf-8"))
+
+
+def resolve_ssic_patterns(ssic: Optional[str], ssic_category: Optional[str]) -> list[str]:
+    if ssic:
+        cleaned = ssic.strip()
+        if cleaned == "":
+            return []
+        if not cleaned.isdigit():
+            raise HTTPException(status_code=400, detail="ssic must be digits")
+        return [cleaned]
+    if ssic_category:
+        data = load_ssic_categories()
+        for category in data.get("categories", []):
+            if category.get("id") == ssic_category:
+                return [str(code) for code in category.get("ssic", [])]
+        raise HTTPException(status_code=400, detail="Unknown ssic_category")
+    return []
+
 
 def parse_date(value: Optional[str], default: date) -> date:
     if not value:
@@ -102,15 +129,27 @@ def to_yyyymm(value: date) -> int:
     return value.year * 100 + value.month
 
 
-def build_ssic_filter(ssic: Optional[str]) -> tuple[str, Dict[str, object]]:
-    if not ssic:
+def build_ssic_filter(
+    ssic: Optional[str],
+    ssic_category: Optional[str],
+    column: str = "primary_ssic_norm",
+) -> tuple[str, Dict[str, object]]:
+    patterns = resolve_ssic_patterns(ssic, ssic_category)
+    if not patterns:
         return "", {}
-    cleaned = ssic.strip()
-    if cleaned == "":
-        return "", {}
-    if not cleaned.isdigit():
-        raise HTTPException(status_code=400, detail="ssic must be digits")
-    return " AND startsWith(primary_ssic_norm, {ssic:String})", {"ssic": cleaned}
+
+    clauses = []
+    params: Dict[str, object] = {}
+    for idx, pattern in enumerate(patterns):
+        key = f"ssic_{idx}"
+        if pattern.endswith("*"):
+            value = pattern[:-1]
+            clauses.append(f"startsWith({column}, {{{key}:String}})")
+            params[key] = value
+        else:
+            clauses.append(f"{column} = {{{key}:String}}")
+            params[key] = pattern
+    return " AND (" + " OR ".join(clauses) + ")", params
 
 
 def build_area_filter(area: Optional[str], area_type: str) -> tuple[str, Dict[str, object]]:
@@ -122,11 +161,18 @@ def build_area_filter(area: Optional[str], area_type: str) -> tuple[str, Dict[st
     return f" AND {column} = {{area:String}}", {"area": area}
 
 
+@router.get("/ssic/categories")
+
+def get_ssic_categories():
+    return load_ssic_categories()
+
+
 @router.get("/overview", response_model=OverviewResponse)
 def get_overview(
     from_date: Optional[str] = Query(None, alias="from"),
     to_date: Optional[str] = Query(None, alias="to"),
     ssic: Optional[str] = None,
+    ssic_category: Optional[str] = Query(None, alias="ssic_category"),
     area: Optional[str] = None,
     area_type: str = Query("planning_area"),
 ):
@@ -136,7 +182,7 @@ def get_overview(
     prev_start = start_date.replace(year=start_date.year - 1)
     prev_end = end_date.replace(year=end_date.year - 1)
 
-    ssic_clause, ssic_params = build_ssic_filter(ssic)
+    ssic_clause, ssic_params = build_ssic_filter(ssic, ssic_category)
     area_clause, area_params = build_area_filter(area, area_type)
 
     total_sql = (
@@ -163,6 +209,7 @@ def get_overview(
         "SELECT primary_ssic_norm, count() AS cnt "
         "FROM acra_entities_enriched "
         "WHERE registration_incorporation_date BETWEEN {start:Date32} AND {end:Date32} "
+        + ssic_clause
         + area_clause
         + " GROUP BY primary_ssic_norm "
         "ORDER BY cnt DESC "
@@ -226,6 +273,7 @@ def get_overview(
 @router.get("/trends/new-entities", response_model=TrendsResponse)
 def get_trends(
     ssic: Optional[str] = None,
+    ssic_category: Optional[str] = Query(None, alias="ssic_category"),
     area: Optional[str] = None,
     area_type: str = Query("planning_area"),
     from_date: Optional[str] = Query(None, alias="from"),
@@ -235,7 +283,7 @@ def get_trends(
     end_date = parse_date(to_date, date.today())
     start_date = parse_date(from_date, end_date - timedelta(days=730))
 
-    ssic_clause, ssic_params = build_ssic_filter(ssic)
+    ssic_clause, ssic_params = build_ssic_filter(ssic, ssic_category)
     area_clause, area_params = build_area_filter(area, area_type)
 
     sql = (
@@ -258,6 +306,8 @@ def get_trends(
 
 @router.get("/rankings/top-ssic", response_model=RankingsResponse)
 def get_top_ssic(
+    ssic: Optional[str] = None,
+    ssic_category: Optional[str] = Query(None, alias="ssic_category"),
     area: Optional[str] = None,
     area_type: str = Query("planning_area"),
     from_date: Optional[str] = Query(None, alias="from"),
@@ -268,17 +318,20 @@ def get_top_ssic(
     end_date = parse_date(to_date, date.today())
     start_date = parse_date(from_date, end_date - timedelta(days=365))
 
+    ssic_clause, ssic_params = build_ssic_filter(ssic, ssic_category)
     area_clause, area_params = build_area_filter(area, area_type)
 
     sql = (
         "SELECT primary_ssic_norm, count() AS cnt "
         "FROM acra_entities_enriched "
         "WHERE registration_incorporation_date BETWEEN {start:Date32} AND {end:Date32}"
+        + ssic_clause
         + area_clause
         + " GROUP BY primary_ssic_norm ORDER BY cnt DESC LIMIT {limit:UInt32}"
     )
 
     params = {"start": start_date, "end": end_date, "limit": limit}
+    params.update(ssic_params)
     params.update(area_params)
 
     rows = client.query(sql, parameters=params).result_rows
@@ -301,6 +354,7 @@ def get_top_ssic(
 @router.get("/map/hotspots", response_model=MapHotspotsResponse)
 def map_hotspots(
     ssic: Optional[str] = None,
+    ssic_category: Optional[str] = Query(None, alias="ssic_category"),
     from_date: Optional[str] = Query(None, alias="from"),
     to_date: Optional[str] = Query(None, alias="to"),
 ):
@@ -311,7 +365,7 @@ def map_hotspots(
     start_month = to_yyyymm(start_date)
     end_month = to_yyyymm(end_date)
 
-    ssic_clause, ssic_params = build_ssic_filter(ssic)
+    ssic_clause, ssic_params = build_ssic_filter(ssic, ssic_category)
 
     sql = (
         "SELECT s.subzone_id, s.name, s.planning_area_id, s.geometry, count() AS cnt "
@@ -346,6 +400,7 @@ def map_hotspots(
 def search_entities(
     q: Optional[str] = None,
     ssic: Optional[str] = None,
+    ssic_category: Optional[str] = Query(None, alias="ssic_category"),
     status: Optional[str] = None,
     limit: int = 50,
     offset: int = 0,
@@ -363,7 +418,7 @@ def search_entities(
         where += " AND entity_status_description = {status:String}"
         params["status"] = status
 
-    ssic_clause, ssic_params = build_ssic_filter(ssic)
+    ssic_clause, ssic_params = build_ssic_filter(ssic, ssic_category)
     where += ssic_clause
     params.update(ssic_params)
 

@@ -1,0 +1,938 @@
+{
+  "sectors": [
+    {
+      "id": "food_beverage",
+      "label": "Food & Beverage"
+    },
+    {
+      "id": "retail_ecommerce",
+      "label": "Retail & E-commerce"
+    },
+    {
+      "id": "wholesale_trading",
+      "label": "Wholesale / Trading / Distribution"
+    },
+    {
+      "id": "transport_logistics",
+      "label": "Transport, Logistics & Delivery"
+    },
+    {
+      "id": "travel_hospitality",
+      "label": "Travel & Hospitality"
+    },
+    {
+      "id": "construction_built",
+      "label": "Construction, Renovation & Built Environment"
+    },
+    {
+      "id": "real_estate",
+      "label": "Real Estate & Property Services"
+    },
+    {
+      "id": "tech_digital",
+      "label": "Tech, Telecoms & Digital Services"
+    },
+    {
+      "id": "finance_insurance",
+      "label": "Finance & Insurance"
+    },
+    {
+      "id": "professional_services",
+      "label": "Professional & Business Services"
+    },
+    {
+      "id": "healthcare_wellness",
+      "label": "Healthcare & Wellness"
+    },
+    {
+      "id": "education_training",
+      "label": "Education & Training"
+    },
+    {
+      "id": "media_entertainment",
+      "label": "Media, Arts & Entertainment"
+    },
+    {
+      "id": "personal_household",
+      "label": "Personal / Household Services"
+    }
+  ],
+  "categories": [
+    {
+      "id": "fnb_restaurants",
+      "label": "Restaurants",
+      "sector": "food_beverage",
+      "keywords": [
+        "food",
+        "restaurant",
+        "dining",
+        "eat"
+      ],
+      "ssic": [
+        "56111"
+      ]
+    },
+    {
+      "id": "fnb_cafes",
+      "label": "Cafes",
+      "sector": "food_beverage",
+      "keywords": [
+        "cafe",
+        "coffee",
+        "brunch"
+      ],
+      "ssic": [
+        "56112"
+      ]
+    },
+    {
+      "id": "fnb_fast_food",
+      "label": "Fast food",
+      "sector": "food_beverage",
+      "keywords": [
+        "fast food",
+        "quick service"
+      ],
+      "ssic": [
+        "56121"
+      ]
+    },
+    {
+      "id": "fnb_food_courts",
+      "label": "Food courts / hawker centres / canteens (operators)",
+      "sector": "food_beverage",
+      "keywords": [
+        "food court",
+        "hawker",
+        "canteen"
+      ],
+      "ssic": [
+        "56122"
+      ]
+    },
+    {
+      "id": "fnb_takeaway",
+      "label": "Takeaway / delivery kiosks",
+      "sector": "food_beverage",
+      "keywords": [
+        "takeaway",
+        "delivery",
+        "kiosk"
+      ],
+      "ssic": [
+        "56123"
+      ]
+    },
+    {
+      "id": "fnb_pubs_bars",
+      "label": "Pubs / bars",
+      "sector": "food_beverage",
+      "keywords": [
+        "pub",
+        "bar",
+        "drinks"
+      ],
+      "ssic": [
+        "56130"
+      ]
+    },
+    {
+      "id": "fnb_hawker_stalls",
+      "label": "Hawker / cooked food stalls",
+      "sector": "food_beverage",
+      "keywords": [
+        "hawker",
+        "cooked food"
+      ],
+      "ssic": [
+        "56140"
+      ]
+    },
+    {
+      "id": "fnb_catering",
+      "label": "Catering",
+      "sector": "food_beverage",
+      "keywords": [
+        "catering",
+        "events"
+      ],
+      "ssic": [
+        "56200"
+      ]
+    },
+    {
+      "id": "retail_supermarkets",
+      "label": "Supermarkets / convenience stores",
+      "sector": "retail_ecommerce",
+      "keywords": [
+        "supermarket",
+        "convenience",
+        "grocery"
+      ],
+      "ssic": [
+        "47101",
+        "47102"
+      ]
+    },
+    {
+      "id": "retail_specialty_food",
+      "label": "Specialty food retail (fruit/veg, meat/seafood, bakery, beverages, supplements)",
+      "sector": "retail_ecommerce",
+      "keywords": [
+        "fruit",
+        "vegetable",
+        "meat",
+        "seafood",
+        "bakery",
+        "beverage"
+      ],
+      "ssic": [
+        "47211",
+        "47212",
+        "47213",
+        "47214",
+        "47215",
+        "47216",
+        "47217",
+        "47218",
+        "47219",
+        "47220"
+      ]
+    },
+    {
+      "id": "retail_fashion_adult",
+      "label": "Fashion: adult clothing",
+      "sector": "retail_ecommerce",
+      "keywords": [
+        "fashion",
+        "adult",
+        "apparel"
+      ],
+      "ssic": [
+        "47711"
+      ]
+    },
+    {
+      "id": "retail_fashion_kids",
+      "label": "Fashion: kids / baby",
+      "sector": "retail_ecommerce",
+      "keywords": [
+        "kids",
+        "baby",
+        "apparel"
+      ],
+      "ssic": [
+        "47712"
+      ]
+    },
+    {
+      "id": "retail_footwear",
+      "label": "Footwear",
+      "sector": "retail_ecommerce",
+      "keywords": [
+        "shoes",
+        "footwear"
+      ],
+      "ssic": [
+        "47713"
+      ]
+    },
+    {
+      "id": "retail_bags",
+      "label": "Bags / luggage",
+      "sector": "retail_ecommerce",
+      "keywords": [
+        "bags",
+        "luggage"
+      ],
+      "ssic": [
+        "47714"
+      ]
+    },
+    {
+      "id": "retail_accessories",
+      "label": "Fashion accessories / sewing accessories",
+      "sector": "retail_ecommerce",
+      "keywords": [
+        "accessories",
+        "sewing"
+      ],
+      "ssic": [
+        "47715"
+      ]
+    },
+    {
+      "id": "retail_beauty",
+      "label": "Beauty / personal care retail",
+      "sector": "retail_ecommerce",
+      "keywords": [
+        "beauty",
+        "personal care",
+        "cosmetics"
+      ],
+      "ssic": [
+        "47721"
+      ]
+    },
+    {
+      "id": "retail_pharmacy",
+      "label": "Pharmacies / drug stores",
+      "sector": "retail_ecommerce",
+      "keywords": [
+        "pharmacy",
+        "drug store"
+      ],
+      "ssic": [
+        "47722"
+      ]
+    },
+    {
+      "id": "retail_chinese_medicine",
+      "label": "Chinese medicine retail",
+      "sector": "retail_ecommerce",
+      "keywords": [
+        "chinese medicine",
+        "tcm"
+      ],
+      "ssic": [
+        "47723"
+      ]
+    },
+    {
+      "id": "retail_electronics",
+      "label": "Electronics / handphones",
+      "sector": "retail_ecommerce",
+      "keywords": [
+        "electronics",
+        "handphone"
+      ],
+      "ssic": [
+        "47411"
+      ]
+    },
+    {
+      "id": "retail_computers",
+      "label": "Computer hardware & peripherals",
+      "sector": "retail_ecommerce",
+      "keywords": [
+        "computer",
+        "hardware",
+        "peripherals"
+      ],
+      "ssic": [
+        "47412"
+      ]
+    },
+    {
+      "id": "retail_games",
+      "label": "Games / gaming retail",
+      "sector": "retail_ecommerce",
+      "keywords": [
+        "games",
+        "gaming"
+      ],
+      "ssic": [
+        "47413"
+      ]
+    },
+    {
+      "id": "retail_home_furniture",
+      "label": "Home & furniture",
+      "sector": "retail_ecommerce",
+      "keywords": [
+        "home",
+        "furniture"
+      ],
+      "ssic": [
+        "4753*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "retail_hardware",
+      "label": "Hardware / DIY",
+      "sector": "retail_ecommerce",
+      "keywords": [
+        "hardware",
+        "diy"
+      ],
+      "ssic": [
+        "47522"
+      ]
+    },
+    {
+      "id": "retail_second_hand",
+      "label": "Second-hand / thrift",
+      "sector": "retail_ecommerce",
+      "keywords": [
+        "second hand",
+        "thrift"
+      ],
+      "ssic": [
+        "47770"
+      ]
+    },
+    {
+      "id": "personal_hair",
+      "label": "Hair salons",
+      "sector": "personal_household",
+      "keywords": [
+        "hair",
+        "salon"
+      ],
+      "ssic": [
+        "96021"
+      ]
+    },
+    {
+      "id": "personal_beauty_spa",
+      "label": "Beauty salons & spas",
+      "sector": "personal_household",
+      "keywords": [
+        "beauty",
+        "spa"
+      ],
+      "ssic": [
+        "96022"
+      ]
+    },
+    {
+      "id": "personal_massage",
+      "label": "Massage / reflexology",
+      "sector": "personal_household",
+      "keywords": [
+        "massage",
+        "reflexology"
+      ],
+      "ssic": [
+        "96024"
+      ]
+    },
+    {
+      "id": "personal_laundry",
+      "label": "Laundry / dry cleaning",
+      "sector": "personal_household",
+      "keywords": [
+        "laundry",
+        "dry cleaning"
+      ],
+      "ssic": [
+        "9601*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "personal_repairs",
+      "label": "Repair services (phones, appliances, etc.)",
+      "sector": "personal_household",
+      "keywords": [
+        "repair",
+        "phones",
+        "appliances"
+      ],
+      "ssic": [
+        "95*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "health_clinics",
+      "label": "Clinics (GP / specialist)",
+      "sector": "healthcare_wellness",
+      "keywords": [
+        "clinic",
+        "gp",
+        "specialist"
+      ],
+      "ssic": [
+        "86*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "health_dental",
+      "label": "Dental",
+      "sector": "healthcare_wellness",
+      "keywords": [
+        "dental",
+        "dentist"
+      ],
+      "ssic": [
+        "8620*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "health_allied",
+      "label": "Allied health (physio, etc.)",
+      "sector": "healthcare_wellness",
+      "keywords": [
+        "physio",
+        "allied health"
+      ],
+      "ssic": [
+        "8690*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "health_eldercare",
+      "label": "Nursing / eldercare / social services",
+      "sector": "healthcare_wellness",
+      "keywords": [
+        "nursing",
+        "eldercare",
+        "social services"
+      ],
+      "ssic": [
+        "87*",
+        "88*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "edu_childcare",
+      "label": "Childcare / preschool",
+      "sector": "education_training",
+      "keywords": [
+        "childcare",
+        "preschool"
+      ],
+      "ssic": [
+        "8510*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "edu_tuition",
+      "label": "Tuition & enrichment",
+      "sector": "education_training",
+      "keywords": [
+        "tuition",
+        "enrichment"
+      ],
+      "ssic": [
+        "8549*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "edu_training",
+      "label": "Professional / skills training providers",
+      "sector": "education_training",
+      "keywords": [
+        "training",
+        "skills"
+      ],
+      "ssic": [
+        "8550*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "transport_courier",
+      "label": "Courier / last-mile delivery",
+      "sector": "transport_logistics",
+      "keywords": [
+        "courier",
+        "delivery"
+      ],
+      "ssic": [
+        "53200"
+      ]
+    },
+    {
+      "id": "transport_freight",
+      "label": "Freight forwarding",
+      "sector": "transport_logistics",
+      "keywords": [
+        "freight",
+        "forwarding"
+      ],
+      "ssic": [
+        "5229*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "transport_warehousing",
+      "label": "Warehousing / storage",
+      "sector": "transport_logistics",
+      "keywords": [
+        "warehouse",
+        "storage"
+      ],
+      "ssic": [
+        "5210*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "transport_moving",
+      "label": "Moving services",
+      "sector": "transport_logistics",
+      "keywords": [
+        "moving",
+        "removal"
+      ],
+      "ssic": [
+        "4943*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "travel_hotels",
+      "label": "Hotels / serviced apartments",
+      "sector": "travel_hospitality",
+      "keywords": [
+        "hotel",
+        "serviced apartment"
+      ],
+      "ssic": [
+        "5510*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "travel_agencies",
+      "label": "Travel agencies / tour operators",
+      "sector": "travel_hospitality",
+      "keywords": [
+        "travel",
+        "tour"
+      ],
+      "ssic": [
+        "7911*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "travel_attractions",
+      "label": "Attractions / visitor services",
+      "sector": "travel_hospitality",
+      "keywords": [
+        "attraction",
+        "visitor"
+      ],
+      "ssic": [
+        "9102*",
+        "9329*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "construction_renovation",
+      "label": "Renovation contractors",
+      "sector": "construction_built",
+      "keywords": [
+        "renovation",
+        "contractor"
+      ],
+      "ssic": [
+        "4330*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "construction_design",
+      "label": "Interior design",
+      "sector": "construction_built",
+      "keywords": [
+        "interior design"
+      ],
+      "ssic": [
+        "7410*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "construction_me",
+      "label": "Electrical / plumbing / M&E services",
+      "sector": "construction_built",
+      "keywords": [
+        "electrical",
+        "plumbing",
+        "m&e"
+      ],
+      "ssic": [
+        "4321*",
+        "4322*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "construction_general",
+      "label": "General construction",
+      "sector": "construction_built",
+      "keywords": [
+        "construction",
+        "general"
+      ],
+      "ssic": [
+        "4100*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "real_estate_agents",
+      "label": "Real estate agencies",
+      "sector": "real_estate",
+      "keywords": [
+        "real estate",
+        "agents"
+      ],
+      "ssic": [
+        "6820*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "real_estate_management",
+      "label": "Property management",
+      "sector": "real_estate",
+      "keywords": [
+        "property management"
+      ],
+      "ssic": [
+        "6830*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "tech_software",
+      "label": "Software development",
+      "sector": "tech_digital",
+      "keywords": [
+        "software",
+        "development"
+      ],
+      "ssic": [
+        "6201*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "tech_it_consulting",
+      "label": "IT consulting / systems integration",
+      "sector": "tech_digital",
+      "keywords": [
+        "it consulting",
+        "systems integration"
+      ],
+      "ssic": [
+        "6202*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "tech_hosting",
+      "label": "Data hosting / web portals",
+      "sector": "tech_digital",
+      "keywords": [
+        "hosting",
+        "web portals"
+      ],
+      "ssic": [
+        "6311*",
+        "6312*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "tech_telecoms",
+      "label": "Telecoms",
+      "sector": "tech_digital",
+      "keywords": [
+        "telecoms",
+        "communications"
+      ],
+      "ssic": [
+        "61*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "finance_accounting",
+      "label": "Accounting / audit / tax",
+      "sector": "finance_insurance",
+      "keywords": [
+        "accounting",
+        "audit",
+        "tax"
+      ],
+      "ssic": [
+        "6920*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "finance_insurance",
+      "label": "Insurance agencies / brokers",
+      "sector": "finance_insurance",
+      "keywords": [
+        "insurance",
+        "broker"
+      ],
+      "ssic": [
+        "6622*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "finance_payments",
+      "label": "Payments / fintech",
+      "sector": "finance_insurance",
+      "keywords": [
+        "payments",
+        "fintech"
+      ],
+      "ssic": [
+        "6499*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "biz_legal",
+      "label": "Legal",
+      "sector": "professional_services",
+      "keywords": [
+        "legal",
+        "law"
+      ],
+      "ssic": [
+        "6910*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "biz_consulting",
+      "label": "Consulting",
+      "sector": "professional_services",
+      "keywords": [
+        "consulting"
+      ],
+      "ssic": [
+        "7020*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "biz_marketing",
+      "label": "Marketing / advertising / PR",
+      "sector": "professional_services",
+      "keywords": [
+        "marketing",
+        "advertising",
+        "pr"
+      ],
+      "ssic": [
+        "7310*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "biz_recruitment",
+      "label": "Recruitment / employment agencies",
+      "sector": "professional_services",
+      "keywords": [
+        "recruitment",
+        "employment"
+      ],
+      "ssic": [
+        "7810*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "biz_cleaning",
+      "label": "Cleaning / facilities management",
+      "sector": "professional_services",
+      "keywords": [
+        "cleaning",
+        "facilities"
+      ],
+      "ssic": [
+        "8121*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "biz_security",
+      "label": "Security services",
+      "sector": "professional_services",
+      "keywords": [
+        "security"
+      ],
+      "ssic": [
+        "8010*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "biz_events",
+      "label": "Event organisers",
+      "sector": "professional_services",
+      "keywords": [
+        "events",
+        "organisers"
+      ],
+      "ssic": [
+        "8230*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "media_content",
+      "label": "Content production (video/photo)",
+      "sector": "media_entertainment",
+      "keywords": [
+        "content",
+        "video",
+        "photo"
+      ],
+      "ssic": [
+        "5911*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "media_publishing",
+      "label": "Publishing / media",
+      "sector": "media_entertainment",
+      "keywords": [
+        "publishing",
+        "media"
+      ],
+      "ssic": [
+        "5811*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "media_live",
+      "label": "Live entertainment / arts groups",
+      "sector": "media_entertainment",
+      "keywords": [
+        "live",
+        "arts"
+      ],
+      "ssic": [
+        "9000*"
+      ],
+      "approx": true
+    },
+    {
+      "id": "media_sports",
+      "label": "Sports & recreation organisers",
+      "sector": "media_entertainment",
+      "keywords": [
+        "sports",
+        "recreation"
+      ],
+      "ssic": [
+        "9311*"
+      ],
+      "approx": true
+    }
+  ]
+}

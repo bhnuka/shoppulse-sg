@@ -83,6 +83,25 @@ export interface ChatSqlResponse {
   sql: string;
 }
 
+export interface SsicSector {
+  id: string;
+  label: string;
+}
+
+export interface SsicCategory {
+  id: string;
+  label: string;
+  sector: string;
+  keywords?: string[];
+  ssic: string[];
+  approx?: boolean;
+}
+
+export interface SsicTaxonomy {
+  sectors: SsicSector[];
+  categories: SsicCategory[];
+}
+
 export interface ChatResponse extends ChatSqlResponse {
   data: Record<string, unknown>[];
   narrative: string;
@@ -94,7 +113,7 @@ export class ApiService {
 
   constructor(private readonly http: HttpClient) {}
 
-  getOverview(params?: { from?: string; to?: string; ssic?: string; area?: string; area_type?: string }): Observable<OverviewResponse> {
+  getOverview(params?: { from?: string; to?: string; ssic?: string; ssic_category?: string; area?: string; area_type?: string }): Observable<OverviewResponse> {
     let httpParams = new HttpParams();
     Object.entries(params ?? {}).forEach(([key, value]) => {
       if (value) {
@@ -104,7 +123,7 @@ export class ApiService {
     return this.http.get<OverviewResponse>(`${this.baseUrl}/api/overview`, { params: httpParams });
   }
 
-  getTrends(params?: { ssic?: string; area?: string; area_type?: string; from?: string; to?: string }): Observable<TrendsResponse> {
+  getTrends(params?: { ssic?: string; ssic_category?: string; area?: string; area_type?: string; from?: string; to?: string }): Observable<TrendsResponse> {
     let httpParams = new HttpParams();
     Object.entries(params ?? {}).forEach(([key, value]) => {
       if (value) {
@@ -114,7 +133,7 @@ export class ApiService {
     return this.http.get<TrendsResponse>(`${this.baseUrl}/api/trends/new-entities`, { params: httpParams });
   }
 
-  getTopSsic(params?: { from?: string; to?: string; area?: string; area_type?: string; limit?: number }): Observable<RankingsResponse> {
+  getTopSsic(params?: { ssic?: string; ssic_category?: string; from?: string; to?: string; area?: string; area_type?: string; limit?: number }): Observable<RankingsResponse> {
     let httpParams = new HttpParams();
     Object.entries(params ?? {}).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== '') {
@@ -124,7 +143,7 @@ export class ApiService {
     return this.http.get<RankingsResponse>(`${this.baseUrl}/api/rankings/top-ssic`, { params: httpParams });
   }
 
-  getHotspots(params?: { ssic?: string; from?: string; to?: string }): Observable<MapHotspotsResponse> {
+  getHotspots(params?: { ssic?: string; ssic_category?: string; from?: string; to?: string }): Observable<MapHotspotsResponse> {
     let httpParams = new HttpParams();
     Object.entries(params ?? {}).forEach(([key, value]) => {
       if (value) {
@@ -134,7 +153,7 @@ export class ApiService {
     return this.http.get<MapHotspotsResponse>(`${this.baseUrl}/api/map/hotspots`, { params: httpParams });
   }
 
-  searchEntities(params: { q?: string; ssic?: string; status?: string; limit?: number; offset?: number }): Observable<EntitySearchResponse> {
+  searchEntities(params: { q?: string; ssic?: string; ssic_category?: string; status?: string; limit?: number; offset?: number }): Observable<EntitySearchResponse> {
     let httpParams = new HttpParams();
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== '') {
@@ -146,6 +165,10 @@ export class ApiService {
 
   getEntity(uen: string): Observable<EntityDetail> {
     return this.http.get<EntityDetail>(`${this.baseUrl}/api/entities/${uen}`);
+  }
+
+  getSsicCategories(): Observable<SsicTaxonomy> {
+    return this.http.get<SsicTaxonomy>(`${this.baseUrl}/api/ssic/categories`);
   }
 
   chatSql(question: string): Observable<ChatSqlResponse> {

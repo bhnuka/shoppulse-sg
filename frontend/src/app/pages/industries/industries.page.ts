@@ -29,6 +29,8 @@ export class IndustriesPage {
       from: this.filters.from,
       to: this.filters.to,
       area: this.filters.area,
+      ssic: this.filters.ssic,
+      ssic_category: this.filters.ssicCategory,
       limit: 15
     }).subscribe((data) => {
       this.rankings = data.items;

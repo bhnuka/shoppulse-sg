@@ -40,7 +40,12 @@ export class MapPage implements AfterViewInit, OnDestroy {
       return;
     }
     this.loading = true;
-    this.api.getHotspots({ ssic: this.filters.ssic, from: this.filters.from, to: this.filters.to }).subscribe((data) => {
+    this.api.getHotspots({
+      ssic: this.filters.ssic,
+      ssic_category: this.filters.ssicCategory,
+      from: this.filters.from,
+      to: this.filters.to
+    }).subscribe((data) => {
       this.renderGeo(data.hotspots);
       this.loading = false;
     });
