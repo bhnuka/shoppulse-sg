@@ -1,69 +1,94 @@
-﻿# ShopPulse SG
+# ShopPulse SG
 
-Recruiter-ready monorepo for a Singapore registry intelligence platform.
+Registry intelligence for Singapore: track where new businesses are forming, drill into industries and explore hotspots by subzone.
 
-## Stack
-- Backend: FastAPI (Python)
-- Frontend: Angular + TypeScript
-- Database: ClickHouse
-- Infra: Docker + Docker Compose
+![ShopPulse SG overview](docs/images/hero.png)
 
-## Quick start (Docker)
+## Highlights
+- Real public registry data (ACRA) with a reproducible data contract and audit report
+- ClickHouse OLAP model (raw / enriched / materialized views)
+- Geo-enrichment (postal / lat/lon / subzone/planning area)
+- Analytics UI with filters, map hotspots and NL to SQL exploration (WIP)
+- End-to-end pipeline in Docker (backend + frontend + database)
 
-```bash
-cd infra
-docker compose up --build
-```
-
-Services:
+## Live demo (local)
 - Frontend: http://localhost:4200
 - Backend: http://localhost:8000
 - Health: http://localhost:8000/health
 - ClickHouse: http://localhost:8123
 - ClickHouse UI: http://localhost:5521
 
-ClickHouse creds (default for docker-compose):
+ClickHouse creds (docker-compose):
 - user: default
 - password: shoppulse
 
-ClickHouse UI uses the same creds.
+If CH-UI shows a connect screen, clear LocalStorage for http://localhost:5521 or open an Incognito window.
 
-If the UI shows a connect screen, clear LocalStorage for http://localhost:5521 or open an Incognito window.
+## Screenshots to add (suggested)
+1) **Overview dashboard**
+   - KPI cards, trend chart, top SSICs list
+   - ![Overview](docs/images/overview.png)
+2) **Footprint map**
+   - choropleth by subzone with tooltip counts
+   - ![Footprint map](docs/images/footprint-map.png)
+3) **Ask ShopPulse (WIP)**
+   - question + narrative + SQL preview (work in progress)
+   - ![Ask ShopPulse](docs/images/ask-shoppulse.png)
 
+## Key features
+- **ACRA data ingestion**: automatic dataset discovery + pagination
+- **Data contract**: strict column selection + cleaning rules
+- **ClickHouse schema**: MergeTree tables + materialized views for fast analytics
+- **Geo enrichment**: OneMap geocoding + point-in-polygon tagging
+- **Analytics API**: trends, rankings, hotspots, entity search, details
+- **NL?SQL layer**: intent + slot extraction with safe SQL templates
 
-## Python deps (uv)
-
-Install uv (one-time):
-```bash
-python -m pip install uv
+## Architecture (high level)
+```
+Frontend (Angular)
+   FastAPI API
+      ClickHouse (OLAP + MVs)
+      GeoJSON + OneMap geocoder
 ```
 
-Install runtime deps for scripts:
+## Stack
+- Backend: FastAPI (Python 3.12)
+- Frontend: Angular + TypeScript
+- Database: ClickHouse
+- Infra: Docker + Docker Compose
+
+## Quick start (Docker)
 ```bash
-uv sync
+cd infra
+docker compose up --build
 ```
 
-Optional geo deps (for polygon matching):
-```bash
-uv sync --extra geo
-```
-
-## Data pipeline (Phase 2)
-
-Generate cleaned ACRA CSV from local files (Phase 1):
+## Data pipeline (Phase 1?2)
+Generate cleaned ACRA CSV from local files:
 ```bash
 python scripts/fetch_acra_collection.py --use-local --input-dir data/raw --out data/processed/acra_entities_cleaned.csv
 ```
 
-Run the full ClickHouse pipeline (schema + dims + raw + enriched):
+Run the ClickHouse pipeline (schema + dims + raw + enriched):
 ```bash
 python scripts/run_pipeline.py --acra-csv data/processed/acra_entities_cleaned.csv --subzone-geojson data/map/MasterPlan2019SubzoneBoundaryNoSeaGEOJSON.geojson --planning-geojson data/map/MasterPlan2025PlanningAreaBoundaryNoSea.geojson --truncate --recreate
 ```
 
-Optional geo enrichment (postal → lat/lon → subzone/planning area):
+Run geo-enrichment (postal ? lat/lon ? subzone/planning area):
 ```bash
-python scripts/run_pipeline.py --acra-csv data/processed/acra_entities_cleaned.csv --subzone-geojson data/map/MasterPlan2019SubzoneBoundaryNoSeaGEOJSON.geojson --planning-geojson data/map/MasterPlan2025PlanningAreaBoundaryNoSea.geojson --truncate --geo-enrich
+python scripts/geo_enrich.py --subzone-geojson data/map/MasterPlan2019SubzoneBoundaryNoSeaGEOJSON.geojson --planning-geojson data/map/MasterPlan2025PlanningAreaBoundaryNoSea.geojson --limit 20000 --sleep 0.05 --concurrency 16 --batch-size 500 --refresh-enriched --loop --mark-failed
 ```
+
+## API surface (core)
+- `GET /health`
+- `GET /api/overview`
+- `GET /api/trends/new-entities`
+- `GET /api/rankings/top-ssic`
+- `GET /api/map/hotspots`
+- `GET /api/entities/search`
+- `GET /api/entities/{uen}`
+- `POST /api/chat/query` (WIP)
+- `POST /api/chat/sql-only` (WIP)
 
 ## Repo structure
 ```
@@ -76,5 +101,8 @@ shoppulse-sg/
   data/
 ```
 
-## Notes
-This is the Phase 2 scaffold. Backend endpoints, NL→SQL, and frontend analytics pages will be added in later phases.
+## What this demonstrates
+- Data modeling and warehouse design (ClickHouse)
+- Reliable ingestion + data quality rules
+- Geo enrichment pipeline and spatial analytics
+- Full-stack product delivery (API + UI)

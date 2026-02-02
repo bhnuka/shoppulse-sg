@@ -1,0 +1,61 @@
+﻿<section class="page">
+  <div class="page-head">
+    <div>
+      <h2>Entities</h2>
+      <p>Search registered entities and view details</p>
+    </div>
+    <div class="pill">{{ total }} results</div>
+  </div>
+
+  <div class="search-bar">
+    <input type="text" placeholder="Search by name or UEN" [(ngModel)]="query" />
+    <input type="text" placeholder="SSIC prefix" [(ngModel)]="ssic" />
+    <input type="text" placeholder="Status" [(ngModel)]="status" />
+    <button (click)="search()">Search</button>
+  </div>
+
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr>
+          <th>UEN</th>
+          <th>Name</th>
+          <th>Status</th>
+          <th>Primary SSIC</th>
+          <th>Planning area</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of items" (click)="select(item)">
+          <td>{{ item.uen }}</td>
+          <td>{{ item.entity_name }}</td>
+          <td>{{ item.entity_status_description }}</td>
+          <td>{{ item.primary_ssic_code || '—' }}</td>
+          <td>{{ item.planning_area_id || '—' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="drawer" *ngIf="selected">
+    <div class="drawer-content">
+      <div class="drawer-head">
+        <div>
+          <h3>{{ selected.entity_name }}</h3>
+          <p>{{ selected.uen }}</p>
+        </div>
+        <button (click)="close()">Close</button>
+      </div>
+      <div class="detail-grid">
+        <div><span>Status</span>{{ selected.entity_status_description }}</div>
+        <div><span>Type</span>{{ selected.entity_type_description }}</div>
+        <div><span>Business constitution</span>{{ selected.business_constitution_description }}</div>
+        <div><span>Company type</span>{{ selected.company_type_description || '—' }}</div>
+        <div><span>Primary SSIC</span>{{ selected.primary_ssic_code || '—' }}</div>
+        <div><span>Secondary SSIC</span>{{ selected.secondary_ssic_code || '—' }}</div>
+        <div><span>Planning area</span>{{ selected.planning_area_id || '—' }}</div>
+        <div><span>Subzone</span>{{ selected.subzone_id || '—' }}</div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,15 @@
+﻿<section class="page">
+  <div class="page-head">
+    <div>
+      <h2>Footprint Map</h2>
+      <p>Subzone hotspots by new entity registrations</p>
+    </div>
+    <div class="pill">Choropleth</div>
+  </div>
+
+  <app-filter-bar [state]="filters" (stateChange)="onFiltersChange($event)"></app-filter-bar>
+
+  <div class="map-card">
+    <div class="map" id="map"></div>
+  </div>
+</section>

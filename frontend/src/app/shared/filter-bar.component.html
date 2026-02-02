@@ -1,0 +1,38 @@
+<div class="filter-bar">
+  <div class="filter">
+    <label>From</label>
+    <input type="date" [(ngModel)]="state.from" (change)="onChange()" />
+  </div>
+  <div class="filter">
+    <label>To</label>
+    <input type="date" [(ngModel)]="state.to" (change)="onChange()" />
+  </div>
+  <div class="filter filter-wide">
+    <label class="label-row">Category / SSIC <span class="info-icon" title="Pick a category or type a SSIC code (e.g., 56111).">?</span></label>
+    <input
+      type="text"
+      placeholder="e.g. Restaurants or 56111"
+      [(ngModel)]="categoryInput"
+      (input)="onCategoryInput()"
+      (focus)="showList()"
+      (blur)="hideList()"
+    />
+    <div class="category-list" *ngIf="showCategoryList">
+      <div class="category-group" *ngFor="let group of groupedCategories">
+        <div class="category-title">{{ group.label }}</div>
+        <button
+          class="category-item"
+          *ngFor="let item of group.items"
+          type="button"
+          (click)="selectCategory(item)"
+        >
+          {{ item.label }}
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="filter">
+    <label class="label-row">Area <span class="info-icon" title="Planning area or subzone name (e.g., Tampines, Jurong West, Woodlands).">?</span></label>
+    <input type="text" placeholder="Planning area" [(ngModel)]="state.area" (input)="onChange()" />
+  </div>
+</div>

@@ -1,156 +1,41 @@
-﻿<div class="layout">
+﻿<div class="app-shell">
   <aside class="sidebar">
     <div class="brand">
       <div class="logo">SP</div>
       <div>
-        <div class="brand-name">ShopPulse SG</div>
-        <div class="brand-sub">Market intelligence</div>
+        <div class="brand-title">ShopPulse SG</div>
+        <div class="brand-sub">Registry intelligence</div>
       </div>
     </div>
+
     <nav class="nav">
-      <a class="nav-item active" href="#">Overview</a>
-      <a class="nav-item" href="#">Sectors</a>
-      <a class="nav-item" href="#">Retailers</a>
-      <a class="nav-item" href="#">Benchmarks</a>
-      <a class="nav-item" href="#">Chat</a>
+      <a routerLink="/overview" routerLinkActive="active">Overview</a>
+      <a routerLink="/footprint" routerLinkActive="active">Footprint Map</a>
+      <a routerLink="/ask" routerLinkActive="active">Ask ShopPulse</a>
     </nav>
+
     <div class="sidebar-footer">
-      <div class="stat">
-        <div class="stat-label">Coverage</div>
-        <div class="stat-value">SG retail + marketplaces</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Model</div>
-        <div class="stat-value">Synthetic + calibrated</div>
-      </div>
+      <div class="caption">Data source</div>
+      <div class="value">ACRA registry + Geo</div>
+      <div class="caption">Refresh</div>
+      <div class="value">Monthly</div>
     </div>
   </aside>
 
-  <div class="main">
+  <main class="main">
     <header class="topbar">
       <div>
-        <div class="page-title">Market Overview</div>
-        <div class="page-sub">Retail momentum, online share, and competitive shifts</div>
+        <div class="top-title">Singapore registry intelligence</div>
+        <div class="top-sub">Track new entity formation by area and industry</div>
       </div>
-      <div class="actions">
-        <button class="btn ghost">Download</button>
-        <button class="btn">New Analysis</button>
+      <div class="top-actions">
+        <button class="ghost">Export</button>
+        <button class="primary">New report</button>
       </div>
     </header>
 
-    <section class="filters">
-      <div class="filter">
-        <div class="filter-label">Date range</div>
-        <div class="filter-value">Jan 2022 — Dec 2025</div>
-      </div>
-      <div class="filter">
-        <div class="filter-label">Sector</div>
-        <div class="filter-value">All sectors</div>
-      </div>
-      <div class="filter">
-        <div class="filter-label">Channel</div>
-        <div class="filter-value">Online + Offline</div>
-      </div>
-      <div class="filter">
-        <div class="filter-label">Region</div>
-        <div class="filter-value">Singapore</div>
-      </div>
-      <button class="btn small">Apply</button>
+    <section class="content">
+      <router-outlet></router-outlet>
     </section>
-
-    <section class="headline">
-      <div class="headline-card">
-        <div class="headline-label">Headline insight</div>
-        <div class="headline-value">Online share surged to 27% in 2025, led by electronics and fashion.</div>
-        <div class="headline-sub">+4.2 pp YoY | Marketplaces now drive 68% of online GMV</div>
-      </div>
-      <div class="mini-metrics">
-        <div class="mini-card">
-          <div class="mini-title">Online share</div>
-          <div class="mini-value">27%</div>
-          <div class="mini-sub">+4.2 pp YoY</div>
-        </div>
-        <div class="mini-card">
-          <div class="mini-title">Top sector</div>
-          <div class="mini-value">Electronics</div>
-          <div class="mini-sub">SGD 1.24B YTD</div>
-        </div>
-        <div class="mini-card">
-          <div class="mini-title">Top retailer</div>
-          <div class="mini-value">Shopee</div>
-          <div class="mini-sub">38% share</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="section-head">
-        <div>
-          <div class="section-title">Market pulse</div>
-          <div class="section-sub">Sales index and online penetration by month</div>
-        </div>
-        <button class="btn ghost small">View details</button>
-      </div>
-      <div class="grid">
-        <div class="card chart">
-          <div class="card-title">Retail sales index</div>
-          <div class="card-sub">All sectors | Monthly</div>
-          <div class="chart-placeholder">Chart placeholder</div>
-        </div>
-        <div class="card chart">
-          <div class="card-title">Online share</div>
-          <div class="card-sub">All sectors | Monthly</div>
-          <div class="chart-placeholder">Chart placeholder</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="section-head">
-        <div>
-          <div class="section-title">Category drilldown</div>
-          <div class="section-sub">Compare sector momentum and marketplace influence</div>
-        </div>
-        <button class="btn ghost small">Compare sectors</button>
-      </div>
-      <div class="grid three">
-        <div class="card chart">
-          <div class="card-title">Electronics</div>
-          <div class="card-sub">Growth + online share</div>
-          <div class="chart-placeholder">Chart placeholder</div>
-        </div>
-        <div class="card chart">
-          <div class="card-title">Fashion</div>
-          <div class="card-sub">Growth + online share</div>
-          <div class="chart-placeholder">Chart placeholder</div>
-        </div>
-        <div class="card chart">
-          <div class="card-title">Grocery</div>
-          <div class="card-sub">Growth + online share</div>
-          <div class="chart-placeholder">Chart placeholder</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel">
-      <div class="panel-header">
-        <div>
-          <div class="panel-title">Ask ShopPulse</div>
-          <div class="panel-sub">NL insights over ClickHouse with explainable SQL</div>
-        </div>
-        <button class="btn ghost small">View SQL</button>
-      </div>
-      <div class="chat">
-        <div class="message user">Compare Shopee, Lazada, and Amazon SG in electronics last year.</div>
-        <div class="message bot">
-          Shopee leads electronics with ~45% share, while Lazada is steady and Amazon SG is growing faster YoY.
-          <div class="chart">Chart placeholder</div>
-        </div>
-      </div>
-      <div class="input-bar">
-        <input type="text" placeholder="Ask a question…" />
-        <button class="btn">Send</button>
-      </div>
-    </section>
-  </div>
+  </main>
 </div>

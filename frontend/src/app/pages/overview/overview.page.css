@@ -1,0 +1,100 @@
+﻿.page {
+  display: grid;
+  gap: 20px;
+}
+
+.page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.page-head h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.page-head p {
+  margin: 6px 0 0;
+  color: #6b7280;
+}
+
+.pill {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #0f172a;
+  color: #fff;
+  font-size: 12px;
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.kpi {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+}
+
+.kpi .label {
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 11px;
+}
+
+.kpi .value {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 8px 0;
+}
+
+.kpi .delta {
+  color: #0f766e;
+  font-weight: 600;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 20px;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+}
+
+.card-title {
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.card table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.card th,
+.card td {
+  padding: 8px 6px;
+  border-bottom: 1px solid #eef2f7;
+  text-align: left;
+}
+
+.card .num {
+  text-align: right;
+}
+
+@media (max-width: 1000px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,39 @@
+﻿<section class="page">
+  <div class="page-head">
+    <div>
+      <h2>Industries</h2>
+      <p>SSIC drilldown and leading categories</p>
+    </div>
+    <div class="pill">Top SSIC</div>
+  </div>
+
+  <app-filter-bar [state]="filters" (stateChange)="onFiltersChange($event)"></app-filter-bar>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-title">Top SSIC codes</div>
+      <div class="list">
+        <button
+          class="row"
+          *ngFor="let item of rankings"
+          [class.active]="item === selected"
+          (click)="select(item)"
+        >
+          <div>
+            <div class="code">{{ item.ssic_code || 'N/A' }}</div>
+            <div class="desc">{{ item.ssic_description || 'Unknown description' }}</div>
+          </div>
+          <div class="count">{{ item.count }}</div>
+        </button>
+      </div>
+    </div>
+
+    <div class="card detail" *ngIf="selected">
+      <div class="card-title">SSIC detail</div>
+      <div class="detail-code">{{ selected.ssic_code || 'N/A' }}</div>
+      <div class="detail-desc">{{ selected.ssic_description || 'No description' }}</div>
+      <div class="detail-meta">New entities: {{ selected.count }}</div>
+      <div class="detail-hint">Drilldown to entity list will be wired in Phase 6.</div>
+    </div>
+  </div>
+</section>

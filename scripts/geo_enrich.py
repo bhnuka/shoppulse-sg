@@ -2,12 +2,13 @@
 import json
 import os
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Iterable
 
 import clickhouse_connect
 import requests
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 try:
     from shapely.geometry import Point, shape
@@ -85,6 +86,14 @@ def match_polygon(point: Tuple[float, float], polygons: List[Tuple[str, object]]
             return poly_id
     return None
 
+def remaining_postal_codes(client) -> int:
+    row = client.query(
+        "SELECT countDistinct(postal_code) FROM acra_entities_raw WHERE postal_code IS NOT NULL "
+        "AND postal_code NOT IN (SELECT postal_code FROM dim_postal_geo)"
+    ).result_rows
+    return int(row[0][0]) if row else 0
+
+
 
 def geo_enrich(
     client,
@@ -92,6 +101,9 @@ def geo_enrich(
     planning_geojson: Path,
     limit: int,
     sleep_seconds: float,
+    concurrency: int,
+    batch_size: int,
+    mark_failed: bool,
 ):
     if not Point:
         raise RuntimeError("shapely not installed; pip install shapely")
@@ -109,66 +121,119 @@ def geo_enrich(
         print("No new postal codes to enrich")
         return
 
+    def chunks(items: List[str], size: int) -> Iterable[List[str]]:
+        for i in range(0, len(items), size):
+            yield items[i : i + size]
+
+    postal_codes = [row[0] for row in rows]
     inserted = 0
-    for (postal_code,) in rows:
-        coords = onemap_geocode(postal_code)
-        if not coords:
-            continue
-        subzone_id = match_polygon(coords, subzone_polys)
-        planning_id = match_polygon(coords, planning_polys)
-        client.insert(
-            "dim_postal_geo",
-            [
-                {
-                    "postal_code": postal_code,
-                    "latitude": coords[0],
-                    "longitude": coords[1],
-                    "subzone_id": subzone_id,
-                    "planning_area_id": planning_id,
-                    "updated_at": datetime.utcnow().isoformat(sep=" "),
-                }
-            ],
-        )
-        inserted += 1
-        if inserted % 100 == 0:
+    for batch in chunks(postal_codes, batch_size):
+        results = []
+        failures = []
+        with ThreadPoolExecutor(max_workers=concurrency) as executor:
+            future_map = {executor.submit(onemap_geocode, code): code for code in batch}
+            for future in as_completed(future_map):
+                code = future_map[future]
+                try:
+                    coords = future.result()
+                except Exception:
+                    coords = None
+                if not coords:
+                    failures.append(code)
+                    continue
+                subzone_id = match_polygon(coords, subzone_polys)
+                planning_id = match_polygon(coords, planning_polys)
+                results.append([
+                    code,
+                    coords[0],
+                    coords[1],
+                    subzone_id,
+                    planning_id,
+                    datetime.now(timezone.utc),
+                ])
+        if results:
+            client.insert(
+                "dim_postal_geo",
+                results,
+                column_names=[
+                    "postal_code",
+                    "latitude",
+                    "longitude",
+                    "subzone_id",
+                    "planning_area_id",
+                    "updated_at",
+                ],
+            )
+            inserted += len(results)
             print(f"Inserted {inserted} postal geo records")
-        time.sleep(sleep_seconds)
+        if failures and mark_failed:
+            client.insert(
+                "dim_postal_geo",
+                [
+                    [code, None, None, None, None, datetime.now(timezone.utc)]
+                    for code in failures
+                ],
+                column_names=[
+                    "postal_code",
+                    "latitude",
+                    "longitude",
+                    "subzone_id",
+                    "planning_area_id",
+                    "updated_at",
+                ],
+            )
+            inserted += len(failures)
+            print(f"Marked {len(failures)} postal codes as failed (total {inserted})")
+        if sleep_seconds:
+            time.sleep(sleep_seconds)
 
     print(f"Inserted {inserted} postal geo records")
 
 
 def rebuild_enriched(client):
     client.command("TRUNCATE TABLE acra_entities_enriched")
-    sql = """
-    INSERT INTO acra_entities_enriched
-    SELECT
-        r.uen,
-        r.entity_name,
-        r.entity_status_description,
-        r.entity_type_description,
-        r.business_constitution_description,
-        r.company_type_description,
-        r.registration_incorporation_date,
-        r.uen_issue_date,
-        r.primary_ssic_code,
-        r.secondary_ssic_code,
-        if(r.primary_ssic_code IS NULL OR r.primary_ssic_code = '', NULL,
-           if(match(r.primary_ssic_code, '^[0-9]+$') AND length(r.primary_ssic_code) < 5,
-              lpad(r.primary_ssic_code, 5, '0'), r.primary_ssic_code)) AS primary_ssic_norm,
-        if(r.secondary_ssic_code IS NULL OR r.secondary_ssic_code = '', NULL,
-           if(match(r.secondary_ssic_code, '^[0-9]+$') AND length(r.secondary_ssic_code) < 5,
-              lpad(r.secondary_ssic_code, 5, '0'), r.secondary_ssic_code)) AS secondary_ssic_norm,
-        r.postal_code,
-        toYYYYMM(r.registration_incorporation_date) AS registration_month,
-        g.latitude,
-        g.longitude,
-        g.subzone_id,
-        g.planning_area_id
-    FROM acra_entities_raw AS r
-    LEFT JOIN dim_postal_geo AS g
-        ON r.postal_code = g.postal_code
-    """
-    client.command(sql)
+    months = client.query(
+        "SELECT DISTINCT toYYYYMM(registration_incorporation_date) AS m "
+        "FROM acra_entities_raw WHERE registration_incorporation_date IS NOT NULL ORDER BY m"
+    ).result_rows
+    if not months:
+        print("No rows to rebuild")
+        return
+
+    for (month,) in months:
+        sql = """
+        INSERT INTO acra_entities_enriched
+        SELECT
+            r.uen,
+            r.entity_name,
+            r.entity_status_description,
+            r.entity_type_description,
+            r.business_constitution_description,
+            r.company_type_description,
+            r.registration_incorporation_date,
+            r.uen_issue_date,
+            r.primary_ssic_code,
+            r.secondary_ssic_code,
+            if(r.primary_ssic_code IS NULL OR r.primary_ssic_code = '', NULL,
+               if(match(r.primary_ssic_code, '^[0-9]+$') AND length(r.primary_ssic_code) < 5,
+                  lpad(r.primary_ssic_code, 5, '0'), r.primary_ssic_code)) AS primary_ssic_norm,
+            if(r.secondary_ssic_code IS NULL OR r.secondary_ssic_code = '', NULL,
+               if(match(r.secondary_ssic_code, '^[0-9]+$') AND length(r.secondary_ssic_code) < 5,
+                  lpad(r.secondary_ssic_code, 5, '0'), r.secondary_ssic_code)) AS secondary_ssic_norm,
+            r.postal_code,
+            toYYYYMM(r.registration_incorporation_date) AS registration_month,
+            g.latitude,
+            g.longitude,
+            g.subzone_id,
+            g.planning_area_id
+        FROM acra_entities_raw AS r
+        LEFT JOIN dim_postal_geo AS g
+            ON r.postal_code = g.postal_code
+        WHERE toYYYYMM(r.registration_incorporation_date) = %(month)s
+        """
+        client.command(sql, parameters={"month": month})
+        print(f"Inserted month {month}")
+
     print("acra_entities_enriched rebuilt")
 
 
@@ -177,14 +242,26 @@ def main():
     parser.add_argument("--subzone-geojson", default="data/raw/subzone.geojson")
     parser.add_argument("--planning-geojson", default="data/raw/planning_area.geojson")
     parser.add_argument("--limit", type=int, default=5000)
-    parser.add_argument("--sleep", type=float, default=0.2)
+    parser.add_argument("--sleep", type=float, default=0.05)
+    parser.add_argument("--concurrency", type=int, default=8)
+    parser.add_argument("--batch-size", type=int, default=200)
     parser.add_argument("--refresh-enriched", action="store_true")
+    parser.add_argument("--loop", action="store_true")
+    parser.add_argument("--mark-failed", action="store_true")
     args = parser.parse_args()
 
     client = get_client()
-    geo_enrich(client, Path(args.subzone_geojson), Path(args.planning_geojson), args.limit, args.sleep)
-    if args.refresh_enriched:
-        rebuild_enriched(client)
+    while True:
+        remaining = remaining_postal_codes(client)
+        if remaining == 0:
+            print("No remaining postal codes to enrich")
+            break
+        print(f"Remaining postal codes: {remaining}")
+        geo_enrich(client, Path(args.subzone_geojson), Path(args.planning_geojson), args.limit, args.sleep, args.concurrency, args.batch_size, args.mark_failed)
+        if args.refresh_enriched:
+            rebuild_enriched(client)
+        if not args.loop:
+            break
 
 
 if __name__ == "__main__":
